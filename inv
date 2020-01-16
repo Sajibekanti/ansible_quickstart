@@ -1,0 +1,3 @@
+[webservers]
+web1 ansible_host=scalzadonna2c.mylabserver.com
+web2 ansible_host=scalzadonna3c.mylabserver.com
