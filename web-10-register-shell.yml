@@ -1,0 +1,35 @@
+--- #Bootstrap Webservers
+- hosts: webservers
+  become: yes
+  tasks:
+  - debug:
+      msg: "System {{ inventory_hostname }} has uuid {{ ansible_product_uuid }}" 
+  - debug:
+      var: target_service 
+  - name: install httpd 
+    yum: 
+      name: "{{ target_service }}" 
+      state: latest
+  - name: delete previous file
+    file:
+      path: /var/www/html/index.html
+      state: absent
+  - name: create index.html file
+    file:
+      name: /var/www/html/index.html
+      state: touch
+  - name: add web content
+    lineinfile:
+      line: "Hello from {{ ansible_hostname }}"
+      path: /var/www/html/index.html
+    register: task_debug
+  - debug:
+      msg: "Output of lineinfile is: {{ task_debug }}"
+  - name: start httpd
+    service:
+      name: "{{ target_service }}"
+      state: started
+  - shell: cat /etc/motd
+    register: motd_contents
+  - debug:
+      msg: "Output of shell is {{ motd_contents }}"
